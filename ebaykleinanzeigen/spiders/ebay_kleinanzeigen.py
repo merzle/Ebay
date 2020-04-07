@@ -5,7 +5,7 @@ import scrapy
 
 from ebaykleinanzeigen.spiders.utilities import Utilities
 
-directory_path = "C:/Users/Lasse/Desktop/StartUp Projekt/Workpackage 3 Lasse/Ebay/"
+directory_path = "C:/Users/MaxMusterMann/Desktop/Ebay Projekt/Pictures/"
 #  path to the directory where the pictures should be saved
 
 min_number_pictures = 4  # only downloads pictures if more than min_number_pictures are available
