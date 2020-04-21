@@ -2,10 +2,11 @@
 from datetime import datetime
 
 import scrapy
+import ebaykleinanzeigen.spiders.article_database as article_database
 
 from ebaykleinanzeigen.spiders.utilities import Utilities
 
-directory_path = "C:/Users/MaxMusterMann/Desktop/Ebay Projekt/Pictures/"
+directory_path = "C:/Users/MaxMustermann/Desktop/Ebay/Pictures/"
 #  path to the directory where the pictures should be saved
 
 min_number_pictures = 4  # only downloads pictures if more than min_number_pictures are available
@@ -41,6 +42,11 @@ class EbayKleinanzeigenSpider(scrapy.Spider):
 
     def parse_article_page(self, response):
 
+        article_number = response.xpath("//input[@name='adId']").attrib["value"]
+
+        if article_database.check_article_number(article_number):
+            return
+
         article_details_categories = [s.replace(":", "") for s in
                                       response.xpath("//li[@class='addetailslist--detail']//text()").extract()]
         index = 0
@@ -69,5 +75,8 @@ class EbayKleinanzeigenSpider(scrapy.Spider):
                              article_model + " " + str(self.counter) + "_" + str(image_counter) + ".jpg"
                 self.utilities.save_image(image, image_path)
                 image_counter += 1
+
+            article_database.save_article(article_database.create_article_json(article_number,
+                                                                               self.unique_identifier, article_images))
 
         self.counter += 1
