@@ -4,11 +4,9 @@ from os import path
 articles_database_file_name = "articles.txt"
 
 
-def create_article_json(article_number, article_date, article_images):
+def create_article_json(article_number):
     my_article = {
-        'number': article_number,
-        'date': article_date,
-        'images': article_images
+        'number': article_number
     }
     return my_article
 

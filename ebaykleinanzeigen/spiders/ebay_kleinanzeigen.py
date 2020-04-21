@@ -76,7 +76,6 @@ class EbayKleinanzeigenSpider(scrapy.Spider):
                 self.utilities.save_image(image, image_path)
                 image_counter += 1
 
-            article_database.save_article(article_database.create_article_json(article_number,
-                                                                               self.unique_identifier, article_images))
+            article_database.save_article(article_database.create_article_json(article_number))
 
         self.counter += 1
