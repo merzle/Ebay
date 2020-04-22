@@ -9,6 +9,8 @@ from ebaykleinanzeigen.spiders.utilities import Utilities
 directory_path = "C:/Users/MaxMustermann/Desktop/Ebay/Pictures/"
 #  path to the directory where the pictures should be saved
 
+articles_database_name = "articles.db"  # name of the database to save the article numbers to
+
 min_number_pictures = 4  # only downloads pictures if more than min_number_pictures are available
 
 scrape_next_pages = True  # scrape more than the first page?
@@ -27,6 +29,11 @@ class EbayKleinanzeigenSpider(scrapy.Spider):
 
         self.unique_identifier = datetime.now().strftime("%d-%m-%y_%H-%M-%S")
         self.counter = 0
+        self.conn = article_database.create_connection(articles_database_name)
+        article_database.create_table(self.conn)
+
+    def __del__(self):
+        self.conn.close()
 
     def parse(self, response):
         article_urls = response.xpath("//a[@class='ellipsis']/@href").extract()
@@ -44,7 +51,7 @@ class EbayKleinanzeigenSpider(scrapy.Spider):
 
         article_number = response.xpath("//input[@name='adId']").attrib["value"]
 
-        if article_database.check_article_number(article_number):
+        if article_database.check_article_number(self.conn, article_number):
             return
 
         article_details_categories = [s.replace(":", "") for s in
@@ -76,6 +83,6 @@ class EbayKleinanzeigenSpider(scrapy.Spider):
                 self.utilities.save_image(image, image_path)
                 image_counter += 1
 
-            article_database.save_article(article_database.create_article_json(article_number))
+            article_database.save_article(self.conn, (article_number, self.unique_identifier))
 
         self.counter += 1
